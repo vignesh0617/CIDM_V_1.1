@@ -1,0 +1,23 @@
+secret_key = my_super_secret_key
+algorithm = HS256
+host = localhost
+database_name = cidm
+username = root
+password = root
+session_time_in_secs = 1300
+home_page_link = /rulebinding
+login_page_link = /login
+logout_page_link = /logout
+rule_execution_link = /ruleexecution
+rules_repo_table_id = rules_repo_table
+rules_repo_table_primary_key_col_number = 2
+rules_repo_table_primary_key_col_numbers = 1,3,4,5
+filter_ids_rule_repo = rr_domain_f,rr_dq_dimension_f,rr_rule_type_f
+filter_table_columns_rules_repo = domain,dq_dimension,rule_type
+filter_table_names_rules_repo = rules_repo,rules_repo,rules_repo
+filter_table_labels_rules_repo = Domain,DQ Dimension,Rule Type
+
+rule_binding_table_id = rule_binding_table
+rule_binding_table_primary_key_col_number = 0
+rule_binding_table_primary_key_col_numbers = 1
+rule_binding_table_col_numbers_to_omit = 0,6
