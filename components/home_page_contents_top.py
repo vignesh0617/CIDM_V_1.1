@@ -12,7 +12,7 @@ layout = html.Div(id='hpct',
                       html.Div(id = 'hpct_filter_section',
                                children = [
                                     html.Div(id="filters_rules_repo",children=filters),
-                                    dbc.Button("Clear All",id="clear_filter_button_rules_repo"),
+                                    dbc.Button("Clear All",id="clear_filter_button_rules_repo",className="btn-theme1"),
                                     #dbc.Button("Apply",id="apply_filter_button_rules_repo"),  
                                ]),
                       

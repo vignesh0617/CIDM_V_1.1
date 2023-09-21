@@ -2,11 +2,11 @@ import dash_bootstrap_components as dbc
 from dash import html
 from connections.MySQL import *
 from callback_functions.custom_helpers import *
-from components.navbar import navbar
+from components.navbar import get_navbar
 from callback_functions.login_page_functions import *
 
 layout= html.Div(children = [
-    navbar,
+    get_navbar(),
     html.Div(id="refresh",key="False"),
     #building the login page   
     dbc.Card([

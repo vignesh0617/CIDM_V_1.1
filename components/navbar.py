@@ -5,20 +5,21 @@ from dash.dependencies import Output , Input, State
 from callback_functions.custom_helpers import decode_token
 import time
 
-navbar = html.Div([
-    html.Nav([
-        html.Ul([
+# navbar = html.Div([
+#     html.Nav([
+#         html.Ul([
             
-            dcc.Link("CIDM",id='logo',href=main_app.environment_details['home_page_link']),
-            dcc.Link("Rule Binding",id={"type" : "nav_link","index":0},href=main_app.environment_details['home_page_link']),
-            dcc.Link("Rule Execution",id={"type" : "nav_link","index":1},href=main_app.environment_details['rule_execution_link']),
-            # dcc.Link("CIDM",id="home_page_link",href=main_app.environment_details['home_page_link']),
-            # dcc.Link("Rule Binding",id="rule_execution_link",href=main_app.environment_details['home_page_link']),
-            # dcc.Link("Rule Execution",id="rule_execution_link",href=main_app.environment_details['rule_execution_link']),
-            # dcc.Link("Logout",id="logout_link",href=main_app.environment_details['logout_page_link'])
-        ])
-    ],className="navbar")
-],className="navbar-container")
+#             dcc.Link("CIDM",id='logo',href=main_app.environment_details['home_page_link']),
+#             dcc.Link("Rule Binding",id={"type" : "nav_link","index":0},href=main_app.environment_details['home_page_link']),
+#             dcc.Link("Rule Execution",id={"type" : "nav_link","index":1},href=main_app.environment_details['rule_execution_link']),
+#             dcc.Link("Score Card",id={"type" : "nav_link","index":2},href=main_app.environment_details['score_card_link']),
+#             # dcc.Link("CIDM",id="home_page_link",href=main_app.environment_details['home_page_link']),
+#             # dcc.Link("Rule Binding",id="rule_execution_link",href=main_app.environment_details['home_page_link']),
+#             # dcc.Link("Rule Execution",id="rule_execution_link",href=main_app.environment_details['rule_execution_link']),
+#             # dcc.Link("Logout",id="logout_link",href=main_app.environment_details['logout_page_link'])
+#         ])
+#     ],className="navbar")
+# ],className="navbar-container")
 
 
 # @main_app.app.callback(
@@ -44,14 +45,29 @@ navbar = html.Div([
 
 
 
-@main_app.app.callback(
-    Output({"type" : "nav_link","index":ALL},"className"),
-    Input ("url2","pathname"),
-    # Input({"type" : "nav_link","index":ALL},"n_clicks"),
-)
-def highlight_active_link(pathname):
-    arr = [main_app.environment_details['home_page_link'],main_app.environment_details['rule_execution_link']]
-    index = arr.index(pathname)
-    className = ["" for i in range(len(arr))]
-    className[index]='active-link'
-    return className
+# @main_app.app.callback(
+#     Output({"type" : "nav_link","index":ALL},"className"),
+#     Input ("url2","pathname"),
+#     # Input({"type" : "nav_link","index":ALL},"n_clicks"),
+# )
+# def highlight_active_link(pathname):
+#     arr = [main_app.environment_details['home_page_link'],main_app.environment_details['rule_execution_link'],main_app.environment_details['score_card_link']]
+#     index = arr.index(pathname)
+#     className = ["" for i in range(len(arr))]
+#     className[index]='active-link'
+#     return className
+
+def get_navbar(active_link:str = ''):
+    navbar = html.Div([
+        html.Nav([
+            html.Ul([
+                
+                dcc.Link("CIDM",id='logo',href=main_app.environment_details['home_page_link']),
+                dcc.Link("Rule Binding",id={"type" : "nav_link","index":0},href=main_app.environment_details['home_page_link'],className='active-link' if main_app.environment_details['home_page_link'] == active_link else ''),
+                dcc.Link("Rule Execution",id={"type" : "nav_link","index":1},href=main_app.environment_details['rule_execution_link'],className='active-link' if main_app.environment_details['rule_execution_link'] == active_link else ''),
+                dcc.Link("Dashboard",id={"type" : "nav_link","index":2},href=main_app.environment_details['score_card_link'],className='active-link' if main_app.environment_details['score_card_link'] == active_link else ''),
+            ])
+        ],className="navbar")
+    ],className="navbar-container")
+
+    return navbar

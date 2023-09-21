@@ -3,8 +3,12 @@ from dash.dependencies import Output, Input, State
 import dash_bootstrap_components as dbc
 from callback_functions.load_function import *
 from callback_functions.custom_helpers import *
-from callback_functions.routing import *
 from pages.home_page import layout as home_page
+from callback_functions.routing import *
+# import plotly.express as px
+
+
+
 
 main_app.app.layout = html.Div(children = [
     dcc.Location(id="url1",refresh=False),

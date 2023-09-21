@@ -1,5 +1,5 @@
 import dash_bootstrap_components as dbc
-from components.navbar import navbar
+from components.navbar import get_navbar
 from dash import  html,dcc
 from connections.MySQL import get_connection
 from callback_functions.main_app_class import main_app
@@ -11,7 +11,7 @@ from components.home_page_contents_top import layout as home_page_contents_top
 
 
 layout = html.Div(children=[
-    navbar,
+    get_navbar(main_app.environment_details['home_page_link']),
     html.Div(id='home_page_contents_top',
              children = home_page_contents_top),
     html.Div(id='home_page_contents_bottom',

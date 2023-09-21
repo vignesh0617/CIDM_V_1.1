@@ -149,7 +149,7 @@ def check_box_function_for_selecting_rules_to_run(n_clicks,checkbox_flag,name):
     Output("info_toast","is_open",allow_duplicate=True),
     Output({"type":f"cb_{main_app.environment_details['rule_binding_table_id']}","index":ALL},"value",allow_duplicate=True),
     Output(f"cb_all_{main_app.environment_details['rule_binding_table_id']}","value",allow_duplicate=True),
-    Output("refresh_button_rule_binding_page","n_clicks"),
+    Output("refresh_button_rule_binding_page","n_clicks",allow_duplicate=True),
     Output("confirm_dialog_box","is_open",allow_duplicate=True),
     Input("run_binded_rule","n_clicks"),
     Input("proceed_delete","n_clicks"),

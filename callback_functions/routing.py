@@ -1,10 +1,17 @@
+from datetime import datetime
+print("importing plotly : ",datetime.now())
+import plotly.express as px
+from plotly.express import pie
+print("starting server ....",datetime.now())
 from callback_functions.main_app_class import main_app
 from callback_functions.custom_helpers import decode_token
+from dash import no_update
 from dash.dependencies import Output, Input, State
 from pages.home_page import layout as home_page
 from pages.login_page import layout as login_page
 from pages.page_not_found import layout as page_not_found
 from pages.rule_binding_page import layout as rule_binding_page
+from pages.scores_page import layout as scores_page
 import time
 
 # app = main_app.app
@@ -23,8 +30,13 @@ c = 0
     Output("app_output","children"),
     Output("token","clear_data"),
     Input("url1","pathname"),
-    State("token","data"))
+    State("token","data"),
+    )
 def validate_token_and_update_screen(pathname,token):
+
+    if pathname is None:
+        print('Request received')
+        return 'Loading'
     global c
     c+=1
     print(f'''----------------------
@@ -46,6 +58,10 @@ def validate_token_and_update_screen(pathname,token):
                 print(f"=========> {main_app.current_url}")
                 main_app.binding_id_list=[]
                 return main_app.environment_details['rule_execution_link'],rule_binding_page,False
+            elif(pathname == main_app.environment_details['score_card_link'] or pathname == main_app.environment_details['login_page_link'] ):
+                print("1.2--------------------")
+                print(f"=========> {main_app.current_url}")
+                return main_app.environment_details['score_card_link'],scores_page,False
             elif(pathname == main_app.environment_details['logout_page_link']):
                 print("1.3--------------------")
                 main_app.connector = ""

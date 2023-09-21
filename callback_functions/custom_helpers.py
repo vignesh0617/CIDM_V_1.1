@@ -5,15 +5,22 @@ from dash import html, Dash
 from connections.MySQL import get_data_as_data_frame
 from callback_functions.main_app_class import main_app
 import pandas as pd
+from dash import Output, Input, State
+from dash.exceptions import PreventUpdate
 
-def load_filter_and_table_for_rule_binding_page():
 
-    filter_tables = main_app.environment_details['filter_table_names_rules_repo'].split(',')
-    filter_tables_columns = main_app.environment_details['filter_table_columns_rules_repo'].split(',')
-    filter_tables_labels = main_app.environment_details['filter_table_labels_rules_repo'].split(',')
-    filter_ids = main_app.environment_details['filter_ids_rule_repo'].split(',')
+
+# this function is used to create filter dropdown with select all feature
+def create_filter_drop_down(
+        filter_tables:list[str],
+        filter_tables_columns:list[str],
+        filter_tables_labels:list[str],
+        filter_ids:list[str],
+        add_filter_card:bool = False):
 
     filters = []
+
+    print(f"\n\ncreating for : {filter_ids} \n\n")
 
     for i in range(len(filter_tables)):
         table_name = filter_tables[i]
@@ -21,6 +28,10 @@ def load_filter_and_table_for_rule_binding_page():
         column_label = filter_tables_labels[i]
         filter_id = filter_ids[i]
 
+        
+        if main_app.select_all_filter_id.get(filter_id) is None:
+            main_app.select_all_filter_id[filter_id] = "function_not_created"
+            
         sql_1 = f"select distinct {column_name} from {table_name}"
         data_frame = get_data_as_data_frame(sql_query=sql_1  , cursor= main_app.cursor)
         # this is the new layout model for the filter buttons with select all check box features
@@ -36,12 +47,73 @@ def load_filter_and_table_for_rule_binding_page():
                     id=filter_id+"_drop_down",
                     className= "filter_drop_down"
                     )
-                ],className = "filter-card",
+                ],className = "filter-card" if add_filter_card else '',
                   id = f"filter_card_{i}",
                 )
         
         filters.append(layout)
 
+    print(main_app.select_all_filter_id)
+    # The below loop is used to update the labels of each filter passed and add select all functionality
+    # for i in range(len(filter_ids)):
+    #     filter_id = filter_ids[i]
+
+    #     #this check prevets the app from crashing
+    #     if main_app.select_all_filter_id[filter_id] == "function_not_created":
+
+    #         #now we set it to function created. this prevents the app from creating the same function being binded
+    #         #to the same filter_id.
+    #         main_app.select_all_filter_id[filter_id] = "function_created"
+            
+    #         #trying to implement a new feature
+    #         @main_app.app.callback(
+    #             Output(filter_id+"_drop_down","label"),
+    #             Output(filter_id+"_select_all","value"),
+    #             Input(filter_id,"value"),
+    #             State(filter_id,"options"),
+    #             # prevent_initial_call='initial_duplicate',
+    #             # State(filter_id+"_select_all","value"),
+    #         )
+    #         def update_filter_label_and_options(value,options):
+                
+    #             if(len(value)==len(options)):
+    #                 return "All",True
+    #             return str([item for item in value]).replace("[","").replace("]","").replace("'","") if len(value) !=0 else "Select...", None
+
+    #         @main_app.app.callback(
+    #             Output(filter_id+"_drop_down","label",allow_duplicate=True),
+    #             Output(filter_id,"value",allow_duplicate=True),
+    #             Input(filter_id+"_select_all","value"),
+    #             State(filter_id,"options"),
+    #             prevent_initial_call='initial_duplicate',
+    #         )
+    #         def update_filter_label_and_options(selected,options):
+    #                 if selected == None :
+    #                     raise PreventUpdate
+    #                 elif selected :
+    #                     return "All",[item for item in options]
+    #                 else :
+    #                     return "Select...",[]
+                    
+
+    
+    print(main_app.select_all_filter_id)
+    return filters
+
+
+def load_filter_and_table_for_rule_binding_page():
+
+    filter_tables = main_app.environment_details['filter_table_names_rules_repo'].split(',')
+    filter_tables_columns = main_app.environment_details['filter_table_columns_rules_repo'].split(',')
+    filter_tables_labels = main_app.environment_details['filter_table_labels_rules_repo'].split(',')
+    filter_ids = main_app.environment_details['filter_ids_rule_repo'].split(',')
+
+    filters = create_filter_drop_down(
+        filter_tables = filter_tables,
+        filter_tables_columns = filter_tables_columns,
+        filter_tables_labels = filter_tables_labels,
+        filter_ids = filter_ids
+    )
     
     sql_query = f"select * from rules_repo"
 
@@ -51,7 +123,7 @@ def load_filter_and_table_for_rule_binding_page():
             data_frame_original=data_frame,
             table_id= main_app.environment_details["rules_repo_table_id"],
             key_col_number=int(main_app.environment_details["rules_repo_table_primary_key_col_number"]),
-            col_numbers_to_omit= [6],
+            col_numbers_to_omit= [ int(num) for num in main_app.environment_details['rules_repo_table_col_numbers_to_omit'].split(',')],
             primary_kel_column_numbers=[int(num) for num in main_app.environment_details["rules_repo_table_primary_key_col_numbers"].split(",")],
             select_record_positon=0,
             select_record_type='radio'
@@ -59,6 +131,42 @@ def load_filter_and_table_for_rule_binding_page():
     
     return filters,table
     
+
+
+def load_filter_and_table_for_score_card_page(): 
+
+    filter_tables = main_app.environment_details['filter_table_names_rule_binding'].split(',')
+    filter_tables_columns = main_app.environment_details['filter_table_columns_rule_binding'].split(',')
+    filter_tables_labels = main_app.environment_details['filter_table_labels_rule_binding'].split(',')
+    filter_ids = main_app.environment_details['filter_ids_rule_binding'].split(',')
+
+    filters = create_filter_drop_down(
+        filter_tables = filter_tables,
+        filter_tables_columns = filter_tables_columns,
+        filter_tables_labels = filter_tables_labels,
+        filter_ids = filter_ids,
+        add_filter_card=True
+    )
+    
+    sql_query = f"select * from binded_rules"
+
+    data_frame = get_data_as_data_frame(sql_query=sql_query,cursor=main_app.cursor)
+
+    
+    main_app.score_card_filtered_rules = list(data_frame['RULE_NAME'])
+
+    table = create_dash_table_from_data_frame(
+            data_frame_original=data_frame,
+            table_id= main_app.environment_details["score_card_top_table_id"],
+            key_col_number=int(main_app.environment_details["score_card_top_table_primary_key_col_number"]),
+            col_numbers_to_omit= [ int(num) for num in main_app.environment_details['score_card_top_table_col_numbers_to_omit'].split(',')],
+            primary_kel_column_numbers=[int(num) for num in main_app.environment_details["score_card_top_table_primary_key_col_numbers"].split(",")],
+            select_record_type='radio',
+            select_record_positon=0,
+            )
+    
+    return filters,table
+
 
 
 def load_latest_rule_binding_table():
@@ -113,9 +221,9 @@ def create_dash_table_from_data_frame(
         select_record_positon:int = None,
         generate_srno:bool = True,
         disable_check_box:bool = True,
+        no_records_msg:str = "No Records to display",
     ):
-
-    print( f"\n\n\n------------ select_record_positon = {select_record_positon} ---------")
+    
     # creates a duplicate data_frame which will omit the col_number mentioned in  "col_numbers_to_omit"
     if col_numbers_to_omit: # this if block will execute only if col_numbers_to_omit array is not empty
         col_range = []
@@ -161,7 +269,7 @@ def create_dash_table_from_data_frame(
                 html.Th(
                     children = [
                         # "Select all",
-                        dbc.Checkbox(id=f"cb_all_{table_id}",label="SELECT ALL" if capital_headings else "Select All")
+                        dbc.Checkbox(id=f"cb_all_{table_id}",label="SELECT ALL" if capital_headings else "Select All",disabled= (no_of_rows == 0))
                     ]
                 )
             )
@@ -222,7 +330,7 @@ def create_dash_table_from_data_frame(
                     'index' : row
                 },
                 # id = f"{table_id}_row{row}",
-                key = data_frame.iloc[row,key_col_number]
+                key = data_frame_original.iloc[row,key_col_number]
             )
         )
     
@@ -231,8 +339,9 @@ def create_dash_table_from_data_frame(
             html.Tr(
                 children = [
                     html.Td(
-                        children="No Records to display",
-                        colSpan= len(table_headings)
+                        children=no_records_msg,
+                        colSpan= len(table_headings),
+                        style={'text-align':'center'}
                     )
                 ]
             )
@@ -253,3 +362,39 @@ def create_dash_table_from_data_frame(
 
 
 
+#below function adds select all functionality to specified filter ids
+filter_ids = main_app.environment_details['filter_ids_rule_repo'].split(",")+main_app.environment_details['filter_ids_rule_binding'].split(",")
+for i in range(len(filter_ids)):
+    filter_id = filter_ids[i]
+    #now we set it to function created. this prevents the app from creating the same function being binded
+    #to the same filter_id.
+    
+    #trying to implement a new feature
+    @main_app.app.callback(
+        Output(filter_id+"_drop_down","label"),
+        Output(filter_id+"_select_all","value"),
+        Input(filter_id,"value"),
+        State(filter_id,"options"),
+        # prevent_initial_call='initial_duplicate',
+        # State(filter_id+"_select_all","value"),
+    )
+    def update_filter_label_and_options(value,options):
+        
+        if(len(value)==len(options)):
+            return "All",True
+        return str([item for item in value]).replace("[","").replace("]","").replace("'","") if len(value) !=0 else "Select...", None
+
+    @main_app.app.callback(
+        Output(filter_id+"_drop_down","label",allow_duplicate=True),
+        Output(filter_id,"value",allow_duplicate=True),
+        Input(filter_id+"_select_all","value"),
+        State(filter_id,"options"),
+        prevent_initial_call='initial_duplicate',
+    )
+    def update_filter_label_and_options(selected,options):
+            if selected == None :
+                raise PreventUpdate
+            elif selected :
+                return "All",[item for item in options]
+            else :
+                return "Select...",[]

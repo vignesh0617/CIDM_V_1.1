@@ -3,10 +3,10 @@ from dash.dependencies import Output,Input,State
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
 from callback_functions.custom_helpers import main_app
-from components.navbar import navbar
+from components.navbar import get_navbar
 
 layout = html.Div([
-    navbar,
+    get_navbar(),
     html.Div([
         "404 Page Not Found",
         html.Br(),
