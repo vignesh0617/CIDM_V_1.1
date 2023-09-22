@@ -14,7 +14,7 @@ class reconciliation_app:
         self.binding_id_list:list[int] = []
         self.score_card_filtered_rules = []
         self.select_all_filter_id:dict = {}
-        self.score_card_selected_rule:str = None
+        # self.score_card_selected_rule:str = None
         self.assign_environment_details()
         
     #used to read the environment.txt file and assign the values to reconciliation_app

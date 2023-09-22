@@ -51,8 +51,8 @@ def refresh_score_card_page(n_clicks,pathname):
                    title = 'No of Failed Rules vs No of Passed Rules',
                    color_discrete_sequence = ['#61876E','#FB2576'],
                    hole = 0.45,
-                   width =350,
-                   height=210)
+                   width =300,
+                   height=200)
     
     pie_chart1.update_layout(margin=dict(l=20, r=20, t=40, b=20))
 
@@ -68,8 +68,8 @@ def refresh_score_card_page(n_clicks,pathname):
                    title = 'Total Records vs Failed Records',
                    color_discrete_sequence = ['#61876E','#FB2576'],
                    hole = 0.45,
-                   width =350,
-                   height=210)
+                   width =300,
+                   height=200)
     
     pie_chart2.update_layout(margin=dict(l=20, r=20, t=40, b=20))
 

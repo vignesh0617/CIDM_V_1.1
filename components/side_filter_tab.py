@@ -7,22 +7,21 @@ from callback_functions.side_filter_tab_function import *
 
 layout = html.Div([
         html.Div([
-            html.Span("Rule Filters : ",id="show-hide-button",className="filter-icon"),
+            html.Div(id = "filters_rule_binding",className="side-filter-tab-contents"),
             html.Button("Clear", id = "clear_filter_button", className="btn-theme1"),
             # html.Button("Apply", id = "apply_filter_button", className="btn-theme1")
         ],className="filter-header",id = "filter_header"),
         
-        html.Div(id = "filters_rule_binding",className="side-filter-tab-contents"),
-        html.Hr(),
-        html.Div(id="trend_chart_options_container",
-                 children=[
-                     html.Span("Trend Chart Options",id='trend_label'),
-                     dbc.RadioItems(id="trend_chart_option",
-                        options = [{"label":"1 month" ,"value" : "1"},
-                                    {"label":"3 months" ,"value" : "3"},
-                                    {"label":"6 months" ,"value" : "6"}],
-                        inline = True,
-                        value="6"),
-                 ])
+        # html.Hr(),
+        # html.Div(id="trend_chart_options_container",
+        #          children=[
+        #              html.Span("Trend Chart Options",id='trend_label'),
+        #              dbc.RadioItems(id="trend_chart_option",
+        #                 options = [{"label":"1 month" ,"value" : "1"},
+        #                             {"label":"3 months" ,"value" : "3"},
+        #                             {"label":"6 months" ,"value" : "6"}],
+        #                 inline = True,
+        #                 value="6"),
+        #          ])
         
 ], id="side-filter-tab-container",className="side-filter-tab-container")

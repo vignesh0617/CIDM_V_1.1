@@ -2,6 +2,7 @@ from dash import html, Input, Output , State,ALL,ctx, MATCH,no_update
 from dash.exceptions import PreventUpdate
 from callback_functions.main_app_class import main_app
 from connections.MySQL import get_data_as_data_frame
+import time
 
 
 @main_app.app.callback(
@@ -191,6 +192,20 @@ def run_selected_rules(n_clicks,n_clicks_2,no_of_records):
                     header = "Internal Error"
                     icon = "warning"
                 msg = msg + "\n"+ final_result[1]
+
+            # main_app.cursor.callproc('REFRESH_SCORE_CARD_DATA')
+            # time.sleep(1)
+            # latest_result = None
+            # for stored_result in main_app.cursor.stored_results():
+            #     latest_result= stored_result.fetchall()
+
+            # main_app.cursor.callproc('REFRESH_TREND_CHART_DATA')
+            # time.sleep(1)
+            # latest_result = None
+            # for stored_result in main_app.cursor.stored_results():
+            #     latest_result= stored_result.fetchall()
+            
+            
         else :
             header = "Warning"
             icon = "warning"
