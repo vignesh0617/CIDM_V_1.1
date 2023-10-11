@@ -83,7 +83,7 @@
 
 #rule_binding_page_main_container{
     overflow: hidden;
-    height: 90vh;
+    height: 90.3vh;
 }
 
 #rule_binding_table input[type=checkbox][disabled]{

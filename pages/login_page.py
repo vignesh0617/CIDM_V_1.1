@@ -6,6 +6,7 @@ from components.navbar import get_navbar
 from callback_functions.login_page_functions import *
 
 layout= html.Div(children = [
+    html.Div(className="app_bg"),
     get_navbar(),
     html.Div(id="refresh",key="False"),
     #building the login page   
@@ -51,6 +52,6 @@ layout= html.Div(children = [
         ])
     ],
     className = "col-5 mx-auto position-absolute top-50 start-50 translate-middle transparent white-text"),
-],className="app_bg")
+])
 
         

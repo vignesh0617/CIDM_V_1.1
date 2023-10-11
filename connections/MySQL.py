@@ -47,15 +47,38 @@ def get_connection(username=main_app.environment_details['username'],password=ma
     
 #gets tables data and returns it from the selected database as a dataframe obj
 def get_data_as_data_frame(sql_query,cursor):
-    cursor.execute(sql_query)
-    fields = cursor.description
-    data = cursor.fetchall()
-    column_labels = [row[0] for row in fields]
-    return pd.DataFrame(data = data, columns= column_labels)
+    try :
+        new_connector, new_cursor, flag = get_connection()
+        new_cursor.execute(sql_query)
+        fields = new_cursor.description
+        data = new_cursor.fetchall()
+        column_labels = [row[0] for row in fields]
+        new_cursor.close()
+        new_connector.close()
+        return pd.DataFrame(data = data, columns= column_labels)
+    except Exception as e :
+        print('-----------------The exception is ---------------------\n',e)
+        new_connector, new_cursor, flag = get_connection()
+        new_cursor.execute(sql_query)
+        fields = new_cursor.description
+        data = new_cursor.fetchall()
+        column_labels = [row[0] for row in fields]
+        new_cursor.close()
+        new_connector.close()
+        return pd.DataFrame(data = data, columns= column_labels)
+
 
 
 main_app.connector, main_app.cursor, flag = get_connection() #connector,connector.cursor(),True
 
+
+
+# main_app.connector, main_app.cursor, flag = get_connection()
+# cursor.execute(sql_query)
+# fields = cursor.description
+# data = cursor.fetchall()
+# column_labels = [row[0] for row in fields]
+# return pd.DataFrame(data = data, columns= column_labels)
 
 
 

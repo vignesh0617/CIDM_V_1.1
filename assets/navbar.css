@@ -61,3 +61,13 @@
     cursor : pointer;
 }
 
+
+#logo{
+    display: flex;
+    width: 110px;
+    align-items: center;
+}
+
+#cognizant_logo{
+    height: 19px;
+}

@@ -61,11 +61,16 @@ def get_navbar(active_link:str = ''):
     navbar = html.Div([
         html.Nav([
             html.Ul([
-                
-                dcc.Link("CIDM",id='logo',href=main_app.environment_details['home_page_link']),
+
+                # main_app.environment_details['custom_user_defined_rules']),
+                dcc.Link(children=[
+                    html.Img(id="cognizant_logo",src=main_app.app.get_asset_url("cognizantlogo.svg"),),
+                    "IDM"
+                ],id='logo',href=main_app.environment_details['home_page_link']),
                 dcc.Link("Rule Binding",id={"type" : "nav_link","index":0},href=main_app.environment_details['home_page_link'],className='active-link' if main_app.environment_details['home_page_link'] == active_link else ''),
                 dcc.Link("Rule Execution",id={"type" : "nav_link","index":1},href=main_app.environment_details['rule_execution_link'],className='active-link' if main_app.environment_details['rule_execution_link'] == active_link else ''),
                 dcc.Link("Dashboard",id={"type" : "nav_link","index":2},href=main_app.environment_details['score_card_link'],className='active-link' if main_app.environment_details['score_card_link'] == active_link else ''),
+                dcc.Link("Custom Rules",id={"type" : "nav_link","index":3},href=main_app.environment_details['custom_user_defined_rules'],className='active-link' if main_app.environment_details['custom_user_defined_rules'] == active_link else ''),
             ])
         ],className="navbar")
     ],className="navbar-container")

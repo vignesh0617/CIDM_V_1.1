@@ -96,7 +96,8 @@ def radio_button_function(row_numbers,key):
     main_app.rule_details = rule_details
     
 
-    sql_query = 'show tables'
+    # sql_query = 'show tables'
+    sql_query = 'select distinct table_name from information_schema.tables where table_schema = "cidm" and table_name not in ("rule_binding","rules_repo","run_history","trend_chart_base","trend_chart_data","ui_score_card_top_table","binded_rules","pie_chart1_data","pie_chart2_data","score_card","score_card_history","score_card_latest","ui_score_card_top_table_latest_data","custom_rules_request")and table_name not in (select distinct failed_data_table_name from ui_score_card_top_table)'
 
     data_frame = get_data_as_data_frame(sql_query=sql_query,cursor=main_app.cursor)
 
@@ -133,7 +134,7 @@ def radio_button_function(row_numbers,key):
                             layout for layout in field_mapper
                         ]),
 
-                    dbc.Button("Bind",id="bind_rule"),
+                    dbc.Button("Bind",id="bind_rule",className = "btn-theme1"),
                     # dbc.Button("Bind & Run",id="bind_and_run_rule"),
                  ]),
         

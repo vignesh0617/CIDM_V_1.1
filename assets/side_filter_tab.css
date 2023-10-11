@@ -21,12 +21,6 @@
 }
 
 
-/* .filter-header *:not(:first-child),
-.side-filter-tab-contents{
-    transition: opacity 0.3s ease;
-    opacity: 0;
-}
-
 .side-filter-tab-container:hover  *
 {
     opacity: 1;
@@ -38,54 +32,6 @@
     font-size: 15px;
 } */
 
-.side-filter-tab-container:hover{
-    flex-basis: 20%;
-}
-
-
-.side-filter-tab-contents{
-    /* height: 80vh;
-    overflow:auto; */
-    
-    /* height: 10vh; */
-    overflow-y: auto;
-
-    /* display: flex;
-    flex-direction: column;
-    flex : 1; */
-}
-
-.side-filter-tab-contents{
-    width: 100%;
-    height: 87vh;
-}
-
-.side-filter-tab-contents:hover::-webkit-scrollbar{
-    width: 4px;
-    margin: none;
-}
-
-.side-filter-tab-contents:hover::-webkit-scrollbar-thumb{
-    background-color: #00000069;
-}
-
-.side-filter-tab-contents:hover::-webkit-scrollbar-track{
-    background-color: #ffffff;
-}
-
-.side-filter-tab-contents::-webkit-scrollbar{
-    width: 4px;
-    margin: none;
-    opacity: 0;
-}
-
-.side-filter-tab-contents::-webkit-scrollbar-thumb{
-    background-color: transparent
-}
-
-.side-filter-tab-contents::-webkit-scrollbar-track{
-    background-color: transparent
-}
 
 
 /* .arrow-position{
@@ -135,8 +81,9 @@
 .filter-header{
     margin:9px 15px ;
     display: flex;
+    flex-direction: row;
     align-items: center;
-    /* justify-content: space-between; */
+    justify-content: space-between;
     
 }
 
@@ -178,6 +125,7 @@
 .form-label{
     margin: 0px;
     /* position: relative; */
+    color: white;
 }
 
 .form-check-label,.form-check-label+*{
@@ -190,7 +138,7 @@
     padding: 10px;
     max-height: 400px;
     overflow-y: auto;
-    width: 100%;
+    width: 90%;
     border : 1px solid black;
     background-color: rgb(255, 255, 255);
 }
@@ -233,4 +181,54 @@
 
 #trend_chart_options_container .form-check{
     align-items: flex-start;
+}
+
+.side-filter-tab-contents{
+    flex: 1;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+
+.side-filter-tab-contents *{
+    font-size: small;
+}
+
+
+.side-filter-tab-contents>*{
+    flex: 1;
+}
+
+.side-filter-tab-contents .filter_drop_down .dropdown{
+    width: 90%;
+}
+
+.side-filter-tab-contents .filter_drop_down .btn {
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+
+    background-color: rgba(246, 242, 246, 0.612);
+    color: black;
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.571);
+}
+
+/* 
+.side-filter-tab-contents .dropdown-menu.show {
+    font-size: inherit;
+    padding: 10px;
+    max-height: 400px;
+    overflow-y: auto;
+    width: 90%;
+    border: 1px solid black;
+    background-color: rgb(255, 255, 255);
+
+    flex: 0;
+} */
+
+#clear_filter_button{
+    transform: translateY(9px);
+    font-size: small;
 }

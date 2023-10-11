@@ -7,6 +7,7 @@ from callback_functions.main_app_class import main_app
 import pandas as pd
 from dash import Output, Input, State
 from dash.exceptions import PreventUpdate
+from datetime import datetime, timedelta
 
 
 
@@ -145,12 +146,19 @@ def load_filter_and_table_for_score_card_page():
         filter_tables_columns = filter_tables_columns,
         filter_tables_labels = filter_tables_labels,
         filter_ids = filter_ids,
-        add_filter_card=True
     )
     
-    sql_query = f"select * from binded_rules"
+    sql_query = main_app.environment_details['query_for_score_card_top_table']
 
     data_frame = get_data_as_data_frame(sql_query=sql_query,cursor=main_app.cursor)
+
+    data_frame.rename(columns = {
+        'FAILED_RECORDS_0_DAYS_BACK':datetime.now().strftime('%b-%d'),
+        'FAILED_RECORDS_1_DAYS_BACK':(datetime.now()-timedelta(days=1)).strftime('%b-%d'),
+        'FAILED_RECORDS_2_DAYS_BACK':(datetime.now()-timedelta(days=2)).strftime('%b-%d'),
+        'FAILED_RECORDS_3_DAYS_BACK':(datetime.now()-timedelta(days=3)).strftime('%b-%d'),
+        'FAILED_RECORDS_4_DAYS_BACK':(datetime.now()-timedelta(days=4)).strftime('%b-%d')
+    },inplace=True)
 
     
     main_app.score_card_filtered_rules = list(data_frame['RULE_NAME'])
@@ -163,6 +171,7 @@ def load_filter_and_table_for_score_card_page():
             primary_kel_column_numbers=[int(num) for num in main_app.environment_details["score_card_top_table_primary_key_col_numbers"].split(",")],
             select_record_type='radio',
             select_record_positon=0,
+            use_mulitiple_keys=True
             )
     
     return filters,table
@@ -213,6 +222,7 @@ def create_dash_table_from_data_frame(
         data_frame_original:pd.DataFrame,
         table_id:str,
         key_col_number:int,
+        use_mulitiple_keys:bool = False,
         action_col_numbers:list[int] = [],
         primary_kel_column_numbers:list[int] = [],
         capital_headings:bool =False,
@@ -322,6 +332,10 @@ def create_dash_table_from_data_frame(
                             
                         )
                     )
+        if use_mulitiple_keys : 
+            key_value = dict(data_frame_original.iloc[row,[num-1 for num in primary_kel_column_numbers]])
+        else:
+            key_value = data_frame_original.iloc[row,key_col_number] 
         table_records.append(
             html.Tr(
                 children = records,
@@ -330,7 +344,7 @@ def create_dash_table_from_data_frame(
                     'index' : row
                 },
                 # id = f"{table_id}_row{row}",
-                key = data_frame_original.iloc[row,key_col_number]
+                key = key_value
             )
         )
     

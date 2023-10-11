@@ -7,12 +7,16 @@ html, body {
 }
 
 .app_bg{
-    background-image: url("Background_Final.png");
+    background-image: url("Background_Final.png") ;
     background-position: right top;
     background-repeat: no-repeat;
     height: 100vh;
     width: 100vw;
     background-color: #000048;
+    z-index: -10;
+    filter: blur(1px);
+    position: absolute;
+    
 }
 
 .margin-0{
@@ -67,22 +71,31 @@ html, body {
     cursor: pointer;
     padding: 6px 10px;
     margin: 2px;
+    
 }
 
 .btn-theme1{
-    border: none;
+    border: 1px solid white;
     border-radius: 2px;
-    background-color: #000048d2;
+    background-color: #000048;
     color: white;
     /* transition: all .3s ease; */
 }
 
 .btn-theme1:hover{
-    background-color: #3c3c9ad2;
+    background-color: #000048;
+    /* background-color: none; */
+    /* transform: translateY(-5px); */
+    /* box-shadow: 0px 7px 9px rgba(255, 255, 255, 0.76); */
 }
 
+
+
 .btn-theme1:active{
-    background-color: #000048d2;
+    /* background-color: #000048; */
+    /* transform: translateY(-2px); */
+    
+    /* box-shadow: 0px 5px 9px rgba(255, 255, 255, 0.76); */
 }
 
 .btn-theme2{
@@ -147,4 +160,17 @@ html, body {
 .disabled{
     cursor : not-allowed;
     display: none;
+}
+
+
+table .form-check label{
+    color : black;
+}
+
+.show .form-check label{
+    color : black;
+}
+
+#home_page_contents_bottom {
+    color : white;
 }
