@@ -7,9 +7,6 @@ from pages.home_page import layout as home_page
 from callback_functions.routing import *
 # import plotly.express as px
 
-
-
-
 main_app.app.layout = html.Div(children = [
     dcc.Location(id="url1",refresh=False),
     dcc.Location(id="url2",refresh=False),
@@ -27,4 +24,4 @@ main_app.app.layout = html.Div(children = [
     ])
 
 if(__name__ == "__main__"):
-    main_app.app.run_server(port = 8051, debug = False, dev_tools_hot_reload = True)
+    main_app.app.run_server(port = 8052, debug = False, dev_tools_hot_reload = True)

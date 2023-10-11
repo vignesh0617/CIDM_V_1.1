@@ -6,6 +6,7 @@ from callback_functions.custom_helpers import main_app
 from components.navbar import get_navbar
 
 layout = html.Div([
+    html.Div(className="app_bg"),
     get_navbar(),
     html.Div([
         "404 Page Not Found",

@@ -59,7 +59,7 @@ html *::-webkit-scrollbar,
     display: flex;
     justify-content: space-between;
     margin: 10px 0px;
-    height: 200px;
+    height: 203.6px;
     overflow-y: hidden;
 }
 
@@ -127,9 +127,6 @@ html *::-webkit-scrollbar,
     margin-bottom: 0px;
 }
 
-#score_card_failed_records_container{
-    background-color: white;
-}
 
 .top-table{
     height: 200px;
@@ -143,5 +140,14 @@ html *::-webkit-scrollbar,
     top: 0;
 }
 
-.top-table{
+/* .nav ,.nav-tabs{
+    height: fit-content;
 }
+
+.nav-tabs .nav-item{
+    height: fit-content;
+}
+
+.score-card-page-contents-bottom .tab-content{
+    height: fit-content;
+} */

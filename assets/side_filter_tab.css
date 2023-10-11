@@ -125,6 +125,7 @@
 .form-label{
     margin: 0px;
     /* position: relative; */
+    color: white;
 }
 
 .form-check-label,.form-check-label+*{

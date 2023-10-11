@@ -11,6 +11,7 @@ login_page_link = /login
 logout_page_link = /logout
 rule_execution_link = /ruleexecution
 score_card_link = /scorecard
+custom_user_defined_rules = /customrules
 
 rules_repo_table_id = rules_repo_table
 rules_repo_table_primary_key_col_number = 2

@@ -76,7 +76,8 @@ def bind_rules(n_clicks,table_name,fields):
         msg = "Error in SQL Execution.Please contact Support"
         header = 'danger'
         icon = "Error!!"
-    duration = 3500
+    duration = 5000
+
     return msg,header,icon,duration,True
 
 ##############
@@ -215,7 +216,7 @@ def run_selected_rules(n_clicks,n_clicks_2,no_of_records):
         msg = msg + "\n" + "Error in SQL Execution.Please contact Support"
         header = 'Error!!'
         icon = "danger"
-    duration = 3500
+    duration = 5000
     main_app.binding_id_list=[]
     return msg,header,icon,duration,True,[False for i in range(len(no_of_records))],None,refresh,False
 
@@ -256,7 +257,7 @@ def open_close_modal(n_clicks,n_clicks_2):
         raise PreventUpdate
 
     if len(main_app.binding_id_list)==0 :
-        return no_update,"Select a rule to delete","Warning","warning",2000,True
+        return no_update,"Select a rule to delete","Warning","warning",5000,True
     
     modal_open_or_close = ctx.triggered_id == 'delete_binded_rule'
 

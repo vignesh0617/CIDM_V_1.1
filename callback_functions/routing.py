@@ -12,6 +12,7 @@ from pages.login_page import layout as login_page
 from pages.page_not_found import layout as page_not_found
 from pages.rule_binding_page import layout as rule_binding_page
 from pages.scores_page import layout as scores_page
+from pages.custom_rules import layout as custom_rules
 import time
 
 # app = main_app.app
@@ -62,12 +63,16 @@ def validate_token_and_update_screen(pathname,token):
                 print("1.2--------------------")
                 print(f"=========> {main_app.current_url}")
                 return main_app.environment_details['score_card_link'],scores_page,False
+            elif(pathname == main_app.environment_details['custom_user_defined_rules'] or pathname == main_app.environment_details['login_page_link'] ):
+                print("1.2--------------------")
+                print(f"=========> {main_app.current_url}")
+                return main_app.environment_details['custom_user_defined_rules'],custom_rules,False
             elif(pathname == main_app.environment_details['logout_page_link']):
-                print("1.3--------------------")
+                print("1.4--------------------")
                 main_app.connector = ""
                 return main_app.environment_details['logout_page_link'],login_page,True
             else:
-                print("1.4--------------------")
+                print("1.5--------------------")
                 return pathname,page_not_found,False
         else:
             print("2-------------------- Session over login again")

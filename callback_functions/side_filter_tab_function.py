@@ -95,7 +95,7 @@ def filter_score_card_rules(n_click,*filter_values):
     pie_chart2 = pie(data_frame=pie_data2,
                    values = pie_data2.columns[2],
                    names = pie_data2.columns[1],
-                   title = 'Total Records vs Failed Records',
+                   title = 'Total Records VS Failed Records',
                    color_discrete_sequence = ['#61876E','#FB2576'],
                    hole = 0.45,
                    width =300,

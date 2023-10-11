@@ -5,7 +5,7 @@ import mysql.connector as sql
 #class for creating the reconciliation app
 class reconciliation_app:
     def __init__(self):
-        self.app:Dash = Dash(name = "__main__",external_stylesheets=[dbc.themes.BOOTSTRAP,dbc.icons.BOOTSTRAP])
+        self.app:Dash = Dash(name = "__main__",external_stylesheets=[dbc.themes.BOOTSTRAP,dbc.icons.BOOTSTRAP],title="CIDM")
         self.connector:sql.connect = None
         self.cursor = None
         self.rule_details = None

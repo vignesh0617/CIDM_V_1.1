@@ -48,7 +48,7 @@ def refresh_score_card_page(n_clicks,pathname):
     pie_chart1 = pie(data_frame=pie_data1,
                    values = pie_data1.columns[1],
                    names = pie_data1.columns[0],
-                   title = 'No of Failed Rules vs No of Passed Rules',
+                   title = ' Total Rules VS Failed Rules',
                    color_discrete_sequence = ['#61876E','#FB2576'],
                    hole = 0.45,
                    width =300,

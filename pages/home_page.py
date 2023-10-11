@@ -11,6 +11,7 @@ from components.home_page_contents_top import layout as home_page_contents_top
 
 
 layout = html.Div(children=[
+    html.Div(className="app_bg"),
     get_navbar(main_app.environment_details['home_page_link']),
     html.Div(id='home_page_contents_top',
              children = home_page_contents_top),

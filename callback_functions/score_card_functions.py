@@ -10,7 +10,9 @@ from callback_functions.side_filter_tab_function import *
     
     Output({"type":f'rb_{main_app.environment_details["score_card_top_table_id"]}',"index":ALL},"value"),
     Output('score_card_binded_rules','children'),
-    Output('trend_chart','figure'),
+    Output('trend_chart_1_month','figure'),
+    Output('trend_chart_3_month','figure'),
+    Output('trend_chart_6_month','figure'),
     Input({'type' : f"{main_app.environment_details['score_card_top_table_id']}_row_number",'index' : ALL},'n_clicks'),
     State({'type' : f"{main_app.environment_details['score_card_top_table_id']}_row_number",'index' : ALL},'key'),
     State({"type":f'rb_{main_app.environment_details["score_card_top_table_id"]}',"index":ALL},"name"),
@@ -43,26 +45,50 @@ def update_bottom_table1_failed_records(n_clicks,keys,key_for_radio_button,):
             # action_col_numbers=[int(num) for num in main_app.environment_details['score_card_bottom1_table_col_action_col_number'].split(",")],
             )
     
-    sql_query = f'select * from trend_chart_data where rule_name = "{rule_name}" and table_name = "{table_name}" and column_name = "{column_name}"'
-    trend_data = get_data_as_data_frame(sql_query=sql_query , cursor = main_app.cursor)
+    trend_charts=[]
+    trend_charts.append(1)
+    trend_charts.append(3)
+    trend_charts.append(3)
+    trend_charts.append(4)
 
     
-    trend_chart = line(data_frame=trend_data,
-                     x='DATE',
-                     y='FAILED_RECORDS',
-                     title = 'Trend Chart',
-                     color_discrete_sequence = ['#FB2576'],
-                    #  hover_data = ['PASSED_RECORDS','FAILED_RECORDS'],
-                     width =615,
-                     height=200)
+    print("trend charts ===== ",len(trend_charts),trend_charts)
+
+    trend_charts=[]
+
     
-    trend_chart.update_layout(margin=dict(l=20,r=20,t=40,b=20))
+    sql_queries = [f'select * from trend_chart_data where rule_name = "{rule_name}" and table_name = "{table_name}" and column_name = "{column_name}" and date2 > sysdate() - interval day(sysdate()) day',f'select * from trend_chart_data where rule_name = "{rule_name}" and table_name = "{table_name}" and column_name = "{column_name}" and date2 > sysdate() - interval 3 month',f'select * from trend_chart_data where rule_name = "{rule_name}" and table_name = "{table_name}" and column_name = "{column_name}"']
+    chart_titles = ["1 Month","3 Months","6 Months"]
+    for i in range(3):
+
+        sql_query = sql_queries[i]
+        
+        print(sql_query)
+        print("trend charts ===== ",len(trend_charts),trend_charts)
+        trend_data = get_data_as_data_frame(sql_query=sql_query , cursor = main_app.cursor)
+
+        
+        trend_chart = line(data_frame=trend_data,
+                        x='DATE',
+                        y='FAILED_RECORDS',
+                        title = chart_titles[i],
+                        color_discrete_sequence = ['#FB2576'],
+                        #  hover_data = ['PASSED_RECORDS','FAILED_RECORDS'],
+                        width =615,
+                        height=200)
+        
+        trend_chart.update_layout(margin=dict(l=20,r=20,t=40,b=20))
+        
+        trend_chart.update_xaxes(title='', visible=True, showticklabels=False)
+        trend_chart.update_yaxes(title='', visible=True, showticklabels=True)
+        trend_chart.update_layout(showlegend=False)
+        trend_chart.update_layout(yaxis_range=[-5,trend_data['FAILED_RECORDS'].max()+10 if trend_data['FAILED_RECORDS'].max() != 0 else 100])
+
+        trend_charts.append(trend_chart)
+
     
-    trend_chart.update_xaxes(title='', visible=True, showticklabels=False)
-    trend_chart.update_yaxes(title='', visible=True, showticklabels=True)
-    trend_chart.update_layout(showlegend=False)
-    trend_chart.update_layout(yaxis_range=[-5,trend_data['FAILED_RECORDS'].max()+10 if trend_data['FAILED_RECORDS'].max() != 0 else 100])
-    
-    return [True if ctx.triggered_id["index"] == i else False for i in range(len(key_for_radio_button))],score_card_binded_rules_table,trend_chart
+    print("trend charts ===== ",len(trend_charts),trend_charts)
+        
+    return [True if ctx.triggered_id["index"] == i else False for i in range(len(key_for_radio_button))],score_card_binded_rules_table,trend_charts[0],trend_charts[1],trend_charts[2]
 
 

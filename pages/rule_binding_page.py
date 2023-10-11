@@ -8,6 +8,7 @@ from callback_functions.custom_helpers import create_dash_table_from_data_frame,
 # rule_binding_table = load_latest_rule_binding_table()
 
 layout = html.Div(id = "rule_binding_page_main_container",children=[
+    html.Div(className="app_bg"),
     get_navbar(main_app.environment_details['rule_execution_link']),
     html.Div(id="rule_binding_page_heading",
              children=[
