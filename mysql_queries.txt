@@ -475,3 +475,43 @@ ORDER BY group_by_last_n_months_weight(LAST_RUN,6) DESC;
 
 
 
+
+
+====================
+
+
+
+delimiter //
+create function sample_where()
+returns varchar(14000)
+deterministic
+begin
+set @conditions = "$param1 = 'chennai' and $param2 = 'new_york'";
+set @param_names = "$param1||$param2";
+set @columnnames = "city1||city2";
+set @current_delimiter = "||";
+
+set @no_of_loops = round((length(@param_names)-length(replace(@param_names,@current_delimiter,"")))/length(@current_delimiter))+1;
+
+set @current_loop = 1;
+
+condition_loop : loop
+	if @current_loop > @no_of_loops then
+		leave condition_loop;
+    end if;
+    
+    set @current_param = substring_index(substring_index(@param_names,@current_delimiter,@current_loop),@current_delimiter,-1);
+    set @current_param_replace_column_name = substring_index(substring_index(@columnnames,@current_delimiter,@current_loop),@current_delimiter,-1);
+    
+    set @conditions = replace(@conditions,@current_param,@current_param_replace_column_name);
+    set @current_loop = @current_loop+1;
+    
+end loop  condition_loop;
+
+	set @where_condition = concat("where ",@conditions);
+
+    return concat("where ",@conditions);
+end//
+
+
+select sample_where();
