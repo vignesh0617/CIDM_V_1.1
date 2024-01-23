@@ -9,6 +9,7 @@ class reconciliation_app:
         self.connector:sql.connect = None
         self.cursor = None
         self.rule_details = None
+        self.failed_data_query:str = None
         self.environment_details:dict = {}
         self.current_url:str = None
         self.binding_id_list:list[int] = []
@@ -26,4 +27,3 @@ class reconciliation_app:
                     self.environment_details[key] = value
                     
 main_app = reconciliation_app() 
-

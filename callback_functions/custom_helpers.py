@@ -116,7 +116,7 @@ def load_filter_and_table_for_rule_binding_page():
         filter_ids = filter_ids
     )
     
-    sql_query = f"select * from rules_repo"
+    sql_query = f'select * from {main_app.environment_details["rules_repo_table_name"]}'
 
     data_frame = get_data_as_data_frame(sql_query=sql_query,cursor=main_app.cursor)
 
@@ -179,8 +179,11 @@ def load_filter_and_table_for_score_card_page():
 
 
 def load_latest_rule_binding_table():
-    sql_query = "select * from rule_binding"
+    sql_query = f"select * from {main_app.environment_details['rule_binding_table_name']} where is_active = 'Y'"
     data_frame = get_data_as_data_frame(sql_query=sql_query,cursor=main_app.cursor)
+
+    data_frame["TABLE_NAME"] = data_frame["TABLE_NAME"].apply(lambda x : x.replace("||"," , "))
+    data_frame["COLUMN_NAME"] = data_frame["COLUMN_NAME"].apply(lambda x : x.replace("||"," , "))
 
        
     rule_binding_table = create_dash_table_from_data_frame(
@@ -218,6 +221,8 @@ def decode_token(token,
 # col_numbers_to_omit ---->0th index. these index's will be omitted while creating tables in front end  
 # select_record_type ------> indicates if to select the single(radio button) or multiple(check box) records . Options to pass "single" or "multiple"
 # select_record_positon ---> 0th index. where to insert the selected record
+# generate_srno -----> if set to true it will generate S.no for each record
+# no_record_msg ---> if the passed data frame has no records it will return a single row with the user specified msg.
 def create_dash_table_from_data_frame(
         data_frame_original:pd.DataFrame,
         table_id:str,
@@ -232,6 +237,7 @@ def create_dash_table_from_data_frame(
         generate_srno:bool = True,
         disable_check_box:bool = True,
         no_records_msg:str = "No Records to display",
+        create_simmple_table:bool = False
     ):
     
     # creates a duplicate data_frame which will omit the col_number mentioned in  "col_numbers_to_omit"
@@ -284,17 +290,24 @@ def create_dash_table_from_data_frame(
                 )
             )
     
+    #
+    #
+    #from here i need to try to improve the perfomance using multi processing in python
+    #
+    #
+    #
     unique_id = 0 # this unique_id is used to identify each key attribute in "td" 
     for row in range(no_of_rows):
         records = []
         for col in range(no_of_cols):
             records.append(
+                html.Td(data_frame.iloc[row,col]) if create_simmple_table else 
                 html.Td(
                     children = data_frame.iloc[row,col],
                     id = {'type' : f"{table_id}_row_data",'index' : unique_id} if col in action_col_numbers else {"type":f"{table_id}_row{row}" ,"index" : col},#f"{table_id}_row_data_row-{row}_col-{col}" ,
                     key = {"column_name" : data_frame_original.columns[col],"column_data" : data_frame_original.iloc[row,col] , "primary_keys" : [{data_frame_original.columns[index-1] : data_frame_original.iloc[row,index-1] } for index in primary_kel_column_numbers ]} if col in action_col_numbers else {"column_name" : data_frame_original.columns[col],"column_data" : data_frame_original.iloc[row,col] },
                     className = "table_action" if col in action_col_numbers and data_frame.iloc[row,col]!=0 else ""
-                )
+                ) 
             )
 
                        
@@ -347,6 +360,14 @@ def create_dash_table_from_data_frame(
                 key = key_value
             )
         )
+
+    
+    #
+    #
+    #till here
+    #
+    #
+    #
     
     if no_of_rows == 0:
         table_records.append(
@@ -412,3 +433,10 @@ for i in range(len(filter_ids)):
                 return "All",[item for item in options]
             else :
                 return "Select...",[]
+            
+
+def refresh_trendchart_scorecard_data():
+    
+    main_app.cursor.callproc('REFRESH_SCORE_CARD_DATA')
+    main_app.cursor.callproc('REFRESH_TREND_CHART_DATA')
+    print("\n\nrefreshed data\n\n")

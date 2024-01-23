@@ -30,7 +30,7 @@ def apply_filter_for_rules_repo_table(*filter_options_and_values):
 
     dictionary = dict([filter_columns[index],filter_values[index]] for index in range(len(filter_values)))
     
-    sql_query = f"select * from rules_repo"
+    sql_query = f'select * from {main_app.environment_details["rules_repo_table_name"]}'
 
     index = 0
     for column_name,filter_value in dictionary.items():
@@ -50,7 +50,7 @@ def apply_filter_for_rules_repo_table(*filter_options_and_values):
             data_frame_original=data_frame,
             table_id= main_app.environment_details["rules_repo_table_id"],
             key_col_number=int(main_app.environment_details["rules_repo_table_primary_key_col_number"]),
-            col_numbers_to_omit= [6],
+            col_numbers_to_omit= [int(num) for num in main_app.environment_details["rules_repo_table_col_numbers_to_omit"].split(",")],
             primary_kel_column_numbers=[int(num) for num in main_app.environment_details["rules_repo_table_primary_key_col_numbers"].split(",")],
             select_record_positon=0,
             select_record_type='radio'
@@ -83,53 +83,80 @@ def clear_all_filters(n_clicks):
     Input({"type":f'{main_app.environment_details["rules_repo_table_id"]}_row_number',"index":ALL},"n_clicks"),
     State({"type":f'rb_{main_app.environment_details["rules_repo_table_id"]}',"index":ALL},"name"),
 )
-def radio_button_function(row_numbers,key):
+def rule_binding_layout_creator(row_numbers,key):
 
     if ctx.triggered_id is None:
         raise PreventUpdate
     
-    no_of_fields = 1
-    rule_details = {"no_of_fields":no_of_fields}
-    for dictionary in key[ctx.triggered_id["index"]] : # returns an array of dict obj's with colname:colvalu pairs
+    
+    rule_details = {}
+
+    for dictionary in key[ctx.triggered_id["index"]] : # returns an array of dict obj's with colname:col value pairs
         rule_details = {**rule_details,**dictionary}
+        
     
     main_app.rule_details = rule_details
     
+    print(rule_details)
 
     # sql_query = 'show tables'
-    sql_query = 'select distinct table_name from information_schema.tables where table_schema = "cidm" and table_name not in ("rule_binding","rules_repo","run_history","trend_chart_base","trend_chart_data","ui_score_card_top_table","binded_rules","pie_chart1_data","pie_chart2_data","score_card","score_card_history","score_card_latest","ui_score_card_top_table_latest_data","custom_rules_request")and table_name not in (select distinct failed_data_table_name from ui_score_card_top_table)'
+    sql_query = f'select distinct table_name from information_schema.tables where table_schema = "{main_app.environment_details["database_name"]}" and table_name not in ("rule_binding","rules_repo","run_history","trend_chart_base","trend_chart_data","trend_chart_data_1_months","trend_chart_data","trend_chart_data_3_months","trend_chart_data","trend_chart_data_6_months","ui_score_card_top_table","binded_rules","pie_chart1_data","pie_chart2_data","score_card","score_card_history","score_card_latest","ui_score_card_top_table_latest_data","custom_rules_request")and table_name not in (select distinct failed_data_table_name from rule_binding)'
+
 
     data_frame = get_data_as_data_frame(sql_query=sql_query,cursor=main_app.cursor)
 
+    source_table_mapper = []
+    for i in range(rule_details["NO_OF_SOURCE_TABLES"]):
+        label = rule_details["TABLE_PARAM_NAME"].split("||")[i]
+        label = f"Source Table {i+1} : " if  label == "" or label is None else label
+        layout = html.Div(id=f'source{i+1}',children=[
+            dbc.Label(label),
+            dbc.Select(id={"type":"source_table_mapper","index":i+1},
+                   options= [{"label" : table_name.upper(), "value":table_name} for table_name in data_frame[data_frame.columns[0]]],
+                   placeholder='Choose Table First...',
+                   className = 'field_mapper'),
+        ],
+        className='label_dropdown_container')
+        source_table_mapper.append(layout)
+
+
+
     field_mapper = []
-    for i in range(no_of_fields):
+    for i in range(rule_details["NO_OF_FIELDS"]):
+        label = rule_details["PARAM_NAME"].split("||")[i]
+        label = f"Field {i+1} : " if  label == "" or label is None else label
         layout = html.Div(id=f'field{i+1}',children=[
-            dbc.Label(f"Field{i+1} : "),
+            dbc.Label(label),
             dbc.Select(id={"type":"field_mapper","index":i+1},
                    options= [],
-                   placeholder='Choose Table First...',
+                   placeholder='Select Table',
                    className = 'field_mapper'),
         ],
         className='label_dropdown_container')
         field_mapper.append(layout)
 
     layout = html.Div(children = [
-        html.Div(id="rule_heading",children=[
+            html.Div(id="rule_heading",children=[
             html.Span(id='rule_label',children=f'Selected Rule : '), 
             html.Span(id="rule_name",children=f'{rule_details["RULE_NAME"]}')
         ]),
         
         html.Div(id='rule_binding_container_inside',
                  children=[
-                    html.Div(id="table_selecotr_container",children=[
-                        dbc.Label(f"Select Table : "),
-                        dbc.Select(id='table_selector',
-                                options= [{"label" : table_name.upper(), "value":table_name} for table_name in data_frame[data_frame.columns[0]]],
-                                placeholder='Select Table ...',
-                                className = 'table_selector'
-                            ),
-                    ]),
+                    # Old layout for updating options and values of selected rules
+                    # html.Div(id="table_selecotr_container",children=[
+                    #     dbc.Label(f"Select Table : "),
+                    #     dbc.Select(id='table_selector',
+                    #             options= [{"label" : table_name.upper(), "value":table_name} for table_name in data_frame[data_frame.columns[0]]],
+                    #             placeholder='Select Table ...',
+                    #             className = 'table_selector'
+                    #         ),
+                    # ]),
                     
+                    html.Div(id = 'source_mapper_container',children=[
+                            layout for layout in source_table_mapper
+                        ]),
+
                     html.Div(id = 'field_mapper_container',children=[
                             layout for layout in field_mapper
                         ]),

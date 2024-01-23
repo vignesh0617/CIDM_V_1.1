@@ -1,8 +1,8 @@
-import pandas as pd
-import mysql.connector as sql
+from connections.MySQL import *
+from datetime import datetime
 
-connector =  sql.connnect(username = "root", password = "root" , host = "localhost", database = "dmart")
+sql_query = f'insert into comments (`request_id` , `comment_by` , `comment` , `time_stamp`) values (26,"test user","is this comment added with timestamp" ,"{datetime.now()}" )'
 
-df = pd.read_sql(sql = "select * from dqsteward")
+res = get_data_as_tuple(sql_query=sql_query)
 
-378867
+print(res)

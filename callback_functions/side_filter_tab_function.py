@@ -38,7 +38,7 @@ from datetime import datetime,timedelta
     
     Output('score_card_rules_table','children',allow_duplicate=True),
     Output({'type' : f"{main_app.environment_details['score_card_top_table_id']}_row_number",'index' : 0},'n_clicks'),
-    Output('pie_chart2','figure',allow_duplicate=True),
+    # Output('pie_chart2','figure',allow_duplicate=True),
     State({'type' : f"{main_app.environment_details['score_card_top_table_id']}_row_number",'index' : 0},'n_clicks'),
     [Input(filter_id,"value") for filter_id in main_app.environment_details["filter_ids_rule_binding"].split(",")],
     prevent_initial_call='initial_duplicate'
@@ -88,25 +88,25 @@ def filter_score_card_rules(n_click,*filter_values):
     
 
     
-    sql_query2 = f"select * from pie_chart2_data where rule_name in {str(main_app.score_card_filtered_rules).replace('[','(').replace(']',')')}"
+    # sql_query2 = f"select * from pie_chart2_data where rule_name in {str(main_app.score_card_filtered_rules).replace('[','(').replace(']',')')}"
     
-    pie_data2 = get_data_as_data_frame(sql_query=sql_query2 , cursor = main_app.cursor)
+    # pie_data2 = get_data_as_data_frame(sql_query=sql_query2 , cursor = main_app.cursor)
     
-    pie_chart2 = pie(data_frame=pie_data2,
-                   values = pie_data2.columns[2],
-                   names = pie_data2.columns[1],
-                   title = 'Total Records VS Failed Records',
-                   color_discrete_sequence = ['#61876E','#FB2576'],
-                   hole = 0.45,
-                   width =300,
-                   height=200)
+    # pie_chart2 = pie(data_frame=pie_data2,
+    #                values = pie_data2.columns[2],
+    #                names = pie_data2.columns[1],
+    #                title = 'Total Records VS Failed Records',
+    #                color_discrete_sequence = ['#61876E','#FB2576'],
+    #                hole = 0.45,
+    #                width =300,
+    #                height=200)
     
-    pie_chart2.update_layout(margin=dict(l=20, r=20, t=40, b=20))
+    # pie_chart2.update_layout(margin=dict(l=20, r=20, t=40, b=20))
 
     
     
     
-    return rules_table,n_click+1 if n_click is not None else 1,pie_chart2
+    return rules_table,n_click+1 if n_click is not None else 1#,pie_chart2
 
 
 @main_app.app.callback(

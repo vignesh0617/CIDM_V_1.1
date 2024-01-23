@@ -4,6 +4,12 @@
     width: 100vw;
     z-index: 10;
     box-shadow: var(--box-shadow);
+    border-bottom: 0.5px solid white;
+}
+
+.navbar ul, .navbar li{
+    list-style-type: none;
+    background-color: #000048;
 }
 
 .navbar{
@@ -34,6 +40,7 @@
 } */
 
 .navbar a{
+    display: flex;
     text-decoration: none;
     color : white;
     list-style: none;
@@ -71,3 +78,22 @@
 #cognizant_logo{
     height: 19px;
 }
+
+
+
+#submenu{
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    opacity: 0;
+    visibility: hidden;
+    transition: .2s ease all;
+    border: 1px solid white;
+}
+
+li:hover ul#submenu{
+    opacity: 1;
+    visibility: visible;
+
+}
+

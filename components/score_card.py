@@ -5,7 +5,7 @@ import dash_bootstrap_components as dbc
 layout = html.Div([
     html.Div([
             html.Div(id = "filters_rule_binding",className="side-filter-tab-contents"),
-            html.Button("Clear", id = "clear_filter_button", className="btn-theme1"),
+            html.Button("Clear", id = "clear_filter_button", className="btn-theme1 btn btn-primary"),
             # html.Button("Apply", id = "apply_filter_button", className="btn-theme1")
         ],className="filter-header",id = "filter_header"),
 
@@ -27,11 +27,20 @@ layout = html.Div([
         )
         ],id="score_card_trend_charts_tabs"),
         
-        html.Div(id="score_card_binded_rules",className = "bottom-table"),
+        
+        html.Div(id="score_card_binded_rules_container",children = [
+            html.Div(id="download_container",children = [
+                html.Button("Download",id="download_failed_data",className = "btn-theme1 btn-primary")
+            ]),
+            html.Div(id="score_card_binded_rules",className="bottom-table")
+        ],className = "bottom-table-container"),
+
+        dcc.Download(id="failed_dataset"),
+        
     ],id="score_card_contents_bottom",className="score-card-page-contents-bottom"),
 
     html.Span(id="refresh_button_score_card_page", className="bi bi-arrow-clockwise refresh_button_position btn-white circle btn-animated"),
-    
+    dcc.Store(id="client_side_data",storage_type="session",data="")
 ],id = "score_card_failed_records_container")
 
 

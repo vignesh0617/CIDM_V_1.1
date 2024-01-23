@@ -46,7 +46,7 @@ def get_connection(username=main_app.environment_details['username'],password=ma
             return None,None,False
     
 #gets tables data and returns it from the selected database as a dataframe obj
-def get_data_as_data_frame(sql_query,cursor):
+def get_data_as_data_frame(sql_query,cursor = None) -> pd.DataFrame:
     try :
         new_connector, new_cursor, flag = get_connection()
         new_cursor.execute(sql_query)
@@ -57,20 +57,27 @@ def get_data_as_data_frame(sql_query,cursor):
         new_connector.close()
         return pd.DataFrame(data = data, columns= column_labels)
     except Exception as e :
+        print(f'The sql query = {sql_query}')
         print('-----------------The exception is ---------------------\n',e)
-        new_connector, new_cursor, flag = get_connection()
-        new_cursor.execute(sql_query)
-        fields = new_cursor.description
-        data = new_cursor.fetchall()
-        column_labels = [row[0] for row in fields]
-        new_cursor.close()
-        new_connector.close()
-        return pd.DataFrame(data = data, columns= column_labels)
-
-
+        return 'Error'
+        
 
 main_app.connector, main_app.cursor, flag = get_connection() #connector,connector.cursor(),True
 
+
+
+def get_data_as_tuple(sql_query:str):
+    try :
+        new_connector, new_cursor, flag = get_connection()
+        new_cursor.execute(sql_query)
+        res = new_cursor.fetchall()
+        new_cursor.close()
+        new_connector.close()
+        return res
+    except Exception as e :
+        print(f'The sql query = {sql_query}')
+        print('-----------------The exception is ---------------------\n',e)
+        return 'Error'
 
 
 # main_app.connector, main_app.cursor, flag = get_connection()

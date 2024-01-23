@@ -2,24 +2,73 @@ from dash import html, Input, Output , State,ALL,ctx, MATCH,no_update
 from dash.exceptions import PreventUpdate
 from callback_functions.main_app_class import main_app
 from connections.MySQL import get_data_as_data_frame
+from callback_functions.custom_helpers import refresh_trendchart_scorecard_data
 import time
+
+# Old function for updating options and values of selected rules
+# @main_app.app.callback(
+#     Output({"type":"field_mapper","index":ALL},"options"),
+#     Output({"type":"field_mapper","index":ALL},"value"),
+#     Input("table_selector","value"),
+# )
+# def update_column_values_in_rule_binding(table_name):
+
+#     if table_name is None:
+#         return [[] for i in range(main_app.rule_details["NO_OF_FIELDS"])],["" for i in range(main_app.rule_details["NO_OF_FIELDS"])]
+
+#     sql_query = f"show columns from {table_name}"
+#     data_frame = get_data_as_data_frame(sql_query=sql_query,cursor=main_app.cursor)
+
+#     options = [{"label" : column_name, "value" : column_name} for column_name in data_frame[data_frame.columns[0]]]
+#     return [ options for i in range(main_app.rule_details["NO_OF_FIELDS"])],[ options[0]["value"] for i in range(main_app.rule_details["NO_OF_FIELDS"])]
 
 
 @main_app.app.callback(
-    Output({"type":"field_mapper","index":ALL},"options"),
-    Output({"type":"field_mapper","index":ALL},"value"),
-    Input("table_selector","value"),
+    Output({"type":"field_mapper","index":ALL},"options",allow_duplicate=True),
+    Output({"type":"field_mapper","index":ALL},"value",allow_duplicate=True),
+    Input({"type":"source_table_mapper","index":ALL},"value"),
+    prevent_initial_call = True
 )
-def update_column_values_in_rule_binding(table_name):
+def update_column_values_in_rule_binding_2(table_name):
 
-    if table_name is None:
-        return [[] for i in range(main_app.rule_details["no_of_fields"])],["" for i in range(main_app.rule_details["no_of_fields"])]
 
-    sql_query = f"show columns from {table_name}"
-    data_frame = get_data_as_data_frame(sql_query=sql_query,cursor=main_app.cursor)
+    table_param_names = main_app.rule_details["TABLE_PARAM_NAME"].split("||")
+    field_order = main_app.rule_details["PARAM_VALUE_MAPPER"]
 
-    options = [{"label" : column_name, "value" : column_name} for column_name in data_frame[data_frame.columns[0]]]
-    return [ options for i in range(main_app.rule_details["no_of_fields"])],[ options[0]["value"] for i in range(main_app.rule_details["no_of_fields"])]
+    if field_order is not None and field_order !="" and len(table_name) > 1:
+
+        options = []
+        values = []
+
+        for i in range(len(table_param_names)):
+            field_order = field_order.replace(table_param_names[i],table_name[i] if table_name[i] is not None else "")
+
+        field_order=field_order.split("||")
+        for i in range(len(field_order)):
+            sql_query = f"show columns from {field_order[i]}"
+            option = []
+            value = ""
+            if field_order[i] != "" and field_order[i] is not None:
+                data_frame = get_data_as_data_frame(sql_query=sql_query,cursor=main_app.cursor)
+                option = [{"label" : column_name, "value" : column_name} for column_name in data_frame[data_frame.columns[0]]]
+                value = option[0]["value"]
+            options.append(option)
+            values.append(value)
+
+        return options,values
+    
+    else:
+
+        if table_name[0] is None:
+            return [[] for i in range(main_app.rule_details["NO_OF_FIELDS"])],["" for i in range(main_app.rule_details["NO_OF_FIELDS"])]
+
+        sql_query = f"show columns from {table_name[0]}"
+        data_frame = get_data_as_data_frame(sql_query=sql_query,cursor=main_app.cursor)
+
+        options = [{"label" : column_name, "value" : column_name} for column_name in data_frame[data_frame.columns[0]]]
+        return [ options for i in range(main_app.rule_details["NO_OF_FIELDS"])],[ options[0]["value"] for i in range(main_app.rule_details["NO_OF_FIELDS"])]
+
+
 
 @main_app.app.callback(
     Output("info_toast","children"),
@@ -28,30 +77,41 @@ def update_column_values_in_rule_binding(table_name):
     Output("info_toast","duration"),
     Output("info_toast","is_open"),
     Input("bind_rule","n_clicks"),
-    State("table_selector","value"),
+    State({"type":"source_table_mapper","index":ALL},"value"),
     State({"type":"field_mapper","index":ALL},"value"),
     prevent_initial_call = True,
 )
-def bind_rules(n_clicks,table_name,fields):
+def bind_rules(n_clicks,table_names,fields):
     if n_clicks is None :
         raise PreventUpdate
     
     try:
-        if table_name is None or None in fields:
+        if  None in table_names or None in fields:
             msg = 'Please select Table and Field name before binding'
             header = 'Warning'
             icon = "warning"
         else :
             
+            # args = (
+            #         main_app.rule_details["RULE_ID"],
+            #         table_names,
+            #         fields[0],
+            #         main_app.rule_details["RULE_TYPE"],
+            #         main_app.rule_details["RULE_NAME"],
+            #         0 # if this is set to 1 then Stored procedure will bind and run the rule. Else it will bind alone
+            #     )
+            
+            # proc_name = 'bind_one_field_rule'
+
             args = (
                     main_app.rule_details["RULE_ID"],
-                    table_name,
-                    fields[0],
-                    main_app.rule_details["RULE_TYPE"],
-                    main_app.rule_details["RULE_NAME"],
+                    "||".join(table_names),
+                    "||".join(fields),
+                    # main_app.rule_details["RULE_TYPE"],
+                    # main_app.rule_details["RULE_NAME"],
                     0 # if this is set to 1 then Stored procedure will bind and run the rule. Else it will bind alone
                 )
-            proc_name = 'bind_one_field_rule'
+            proc_name = 'bind_rule'
             main_app.cursor.callproc(proc_name,args=args)
             final_result  = None
             latest_result = None
@@ -117,7 +177,6 @@ def bind_rules(n_clicks,table_name,fields):
 ###############################
 
 @main_app.app.callback(
-    Output("rule_binding_page_heading","children"),
     Output({"type":f"cb_{main_app.environment_details['rule_binding_table_id']}","index":ALL},"value"),
     Output(f"cb_all_{main_app.environment_details['rule_binding_table_id']}","value"),
     Input({"type":f"{main_app.environment_details['rule_binding_table_id']}_row_number","index":ALL},"n_clicks"),
@@ -140,7 +199,7 @@ def check_box_function_for_selecting_rules_to_run(n_clicks,checkbox_flag,name):
 
     checkbox_flag[index] = not checkbox_flag[index]
     flag = checkbox_flag.count(True)==len(checkbox_flag)
-    return f"hey there - {main_app.binding_id_list}",checkbox_flag , True if flag else None  #no_update if checkbox_flag.count(True)!=len(checkbox_flag) else True# f"changed--{main_app.binding_id_list} - {n_clicks} - {n_clicks_2}", 
+    return checkbox_flag , True if flag else None  #no_update if checkbox_flag.count(True)!=len(checkbox_flag) else True# f"changed--{main_app.binding_id_list} - {n_clicks} - {n_clicks_2}", 
 
 
 @main_app.app.callback(
@@ -164,7 +223,9 @@ def run_selected_rules(n_clicks,n_clicks_2,no_of_records):
         raise PreventUpdate
     
     if ctx.triggered_id == 'run_binded_rule' :
-        proc_name = 'run_one_field_rule' 
+        # below proc_name is according to old mysql code
+        # proc_name = 'run_one_field_rule' 
+        proc_name = 'run_rule'
         refresh = no_update
     else :
         proc_name = 'delete_rule_binding'
@@ -194,6 +255,8 @@ def run_selected_rules(n_clicks,n_clicks_2,no_of_records):
                     icon = "warning"
                 msg = msg + "\n"+ final_result[1]
 
+            refresh_trendchart_scorecard_data()
+
             # main_app.cursor.callproc('REFRESH_SCORE_CARD_DATA')
             # time.sleep(1)
             # latest_result = None
@@ -222,7 +285,6 @@ def run_selected_rules(n_clicks,n_clicks_2,no_of_records):
 
 
 @main_app.app.callback(
-    Output("rule_binding_page_heading","children",allow_duplicate=True),
     Output({"type":f"cb_{main_app.environment_details['rule_binding_table_id']}","index":ALL},"value",allow_duplicate=True),
     Input(f"cb_all_{main_app.environment_details['rule_binding_table_id']}","value"),
     State({"type":f"cb_{main_app.environment_details['rule_binding_table_id']}","index":ALL},"name"),
@@ -237,7 +299,7 @@ def select_and_unselect_all_rulebindings(select_all,check_boxes):
             for index in range(len(check_boxes)):
                 main_app.binding_id_list.append(check_boxes[index][0]["RULE_BINDING_ID"])
 
-        return f"hey there - {main_app.binding_id_list}",[select_all for i in range(len(check_boxes))]
+        return [select_all for i in range(len(check_boxes))]
 
 
 @main_app.app.callback(

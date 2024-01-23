@@ -1,6 +1,7 @@
 #custom_rules_container form{
     margin: 40px 180px;
     overflow-y: auto;
+    overflow-x:hidden ;
     height: 77vh;
 }
 
@@ -40,4 +41,8 @@
 
 #custom_rules_container  .form-control.is-invalid{
     border : 3px solid #dc3545;
+}
+
+#user_email , #request_id , #status{
+    cursor: not-allowed;
 }

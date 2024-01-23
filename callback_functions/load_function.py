@@ -30,7 +30,7 @@ def refresh_home_page_page(n_clicks):
         Output("filters_rule_binding","children",allow_duplicate=True),
         Output("score_card_rules_table","children",allow_duplicate=True),
         Output('pie_chart1','figure'),
-        Output('pie_chart2','figure',allow_duplicate=True),
+        # Output('pie_chart2','figure',allow_duplicate=True),
         Input("refresh_button_score_card_page","n_clicks"),
         Input("url1","pathname"),
         prevent_initial_call = 'initial_duplicate'
@@ -57,26 +57,26 @@ def refresh_score_card_page(n_clicks,pathname):
     pie_chart1.update_layout(margin=dict(l=20, r=20, t=40, b=20))
 
 
+    # OLD FUNCTION FOR UPDATING PIE CHART 2
+    # sql_query2 = f"select * from pie_chart2_data where rule_name in {str(main_app.score_card_filtered_rules).replace('[','(').replace(']',')')}"
     
-    sql_query2 = f"select * from pie_chart2_data where rule_name in {str(main_app.score_card_filtered_rules).replace('[','(').replace(']',')')}"
+    # pie_data2 = get_data_as_data_frame(sql_query=sql_query2 , cursor = main_app.cursor)
     
-    pie_data2 = get_data_as_data_frame(sql_query=sql_query2 , cursor = main_app.cursor)
+    # pie_chart2 = pie(data_frame=pie_data2,
+    #                values = pie_data2.columns[2],
+    #                names = pie_data2.columns[1],
+    #                title = 'Total Records vs Failed Records',
+    #                color_discrete_sequence = ['#61876E','#FB2576'],
+    #                hole = 0.45,
+    #                width =300,
+    #                height=200)
     
-    pie_chart2 = pie(data_frame=pie_data2,
-                   values = pie_data2.columns[2],
-                   names = pie_data2.columns[1],
-                   title = 'Total Records vs Failed Records',
-                   color_discrete_sequence = ['#61876E','#FB2576'],
-                   hole = 0.45,
-                   width =300,
-                   height=200)
-    
-    pie_chart2.update_layout(margin=dict(l=20, r=20, t=40, b=20))
+    # pie_chart2.update_layout(margin=dict(l=20, r=20, t=40, b=20))
 
     
 
 
-    return filters,top_table,pie_chart1,pie_chart2
+    return filters,top_table,pie_chart1#,pie_chart2
 
 
 

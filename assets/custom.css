@@ -75,15 +75,16 @@ html, body {
 }
 
 .btn-theme1{
-    border: 1px solid white;
+    border: 1px solid rgb(164, 164, 164);
     border-radius: 2px;
-    background-color: #000048;
+    /* background-color: #000048; */
+    background-color: #090936;
     color: white;
     /* transition: all .3s ease; */
 }
 
 .btn-theme1:hover{
-    background-color: #000048;
+    background-color: #090936;
     /* background-color: none; */
     /* transform: translateY(-5px); */
     /* box-shadow: 0px 7px 9px rgba(255, 255, 255, 0.76); */

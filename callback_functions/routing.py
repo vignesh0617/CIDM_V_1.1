@@ -12,7 +12,8 @@ from pages.login_page import layout as login_page
 from pages.page_not_found import layout as page_not_found
 from pages.rule_binding_page import layout as rule_binding_page
 from pages.scores_page import layout as scores_page
-from pages.custom_rules import layout as custom_rules
+from pages.custom_rules_raise_req import layout as custom_rules
+from pages.custom_rules_my_req import layout as my_request
 import time
 
 # app = main_app.app
@@ -63,10 +64,14 @@ def validate_token_and_update_screen(pathname,token):
                 print("1.2--------------------")
                 print(f"=========> {main_app.current_url}")
                 return main_app.environment_details['score_card_link'],scores_page,False
-            elif(pathname == main_app.environment_details['custom_user_defined_rules'] or pathname == main_app.environment_details['login_page_link'] ):
+            elif(pathname == main_app.environment_details['custom_rules_new'] or pathname == main_app.environment_details['login_page_link'] ):
                 print("1.2--------------------")
                 print(f"=========> {main_app.current_url}")
-                return main_app.environment_details['custom_user_defined_rules'],custom_rules,False
+                return main_app.environment_details['custom_rules_new'],custom_rules,False
+            elif(pathname == main_app.environment_details['custom_rules_my_req'] or pathname == main_app.environment_details['login_page_link'] ):
+                print("1.2--------------------")
+                print(f"=========> {main_app.current_url}")
+                return main_app.environment_details['custom_rules_my_req'],my_request,False
             elif(pathname == main_app.environment_details['logout_page_link']):
                 print("1.4--------------------")
                 main_app.connector = ""
